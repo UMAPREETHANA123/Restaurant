@@ -1,22 +1,159 @@
-# Restaurant Website
-The objective of this project was to develop a simple, interactive restaurant website using only JavaScript to dynamically generate all the webpage content. This approach avoids hardcoding HTML in the body, and instead uses the Document Object Model (DOM) to create and inject all elements through script.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delicious Bites - JavaScript Website</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background-color: #fffaf0;
+    }
+    header {
+      background-color: #e67e22;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background-color: #f39c12;
+      text-align: center;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    section {
+      padding: 20px;
+    }
+    .menu-item {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    form {
+      background-color: #f4f4f4;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 400px;
+      margin: auto;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    form button {
+      background-color: #e67e22;
+      color: white;
+      padding: 10px;
+      border: none;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #eee;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Helper to create elements
+    function createEl(tag, options = {}, ...children) {
+      const el = document.createElement(tag);
+      for (let key in options) {
+        if (key === 'class') el.className = options[key];
+        else if (key === 'html') el.innerHTML = options[key];
+        else el.setAttribute(key, options[key]);
+      }
+      children.forEach(child => {
+        if (typeof child === 'string') el.appendChild(document.createTextNode(child));
+        else if (child) el.appendChild(child);
+      });
+      return el;
+    }
 
-To start, I defined a helper function named createEl(). This function simplifies the creation of elements by allowing me to set attributes, inner text or HTML, and append children — all in one call. This reduced code redundancy and made it easier to manage nested structures like forms and sections.
+    // Header
+    const header = createEl('header', {}, 
+      createEl('h1', {}, 'Delicious Bites'),
+      createEl('p', {}, 'Where taste meets tradition')
+    );
 
-Using this function, I dynamically created all the core parts of a website:
+    // Navigation
+    const nav = createEl('nav', {}, 
+      createEl('a', {href: '#menu'}, 'Menu'),
+      createEl('a', {href: '#contact'}, 'Contact')
+    );
 
-A header section with the restaurant’s name and tagline.
+    // Menu Section
+    const menuSection = createEl('section', {id: 'menu'}, 
+      createEl('h2', {}, 'Our Menu')
+    );
 
-A navigation bar with links to the Menu and Contact sections.
+    const menuItems = [
+      {name: 'Margherita Pizza', desc: 'Classic cheese pizza with fresh basil - ₹250'},
+      {name: 'Pasta Alfredo', desc: 'Creamy white sauce pasta with mushrooms - ₹300'},
+      {name: 'Paneer Tikka', desc: 'Spicy grilled paneer with mint chutney - ₹220'}
+    ];
 
-A menu section, where each dish (name and description) was defined in an array and rendered dynamically using a loop.
+    menuItems.forEach(item => {
+      const div = createEl('div', {class: 'menu-item'}, 
+        createEl('h3', {}, item.name),
+        createEl('p', {}, item.desc)
+      );
+      menuSection.appendChild(div);
+    });
 
-A contact section containing a form with input fields for name, email, and message.
+    // Contact Section
+    const contactSection = createEl('section', {id: 'contact'}, 
+      createEl('h2', {}, 'Contact Us')
+    );
 
-For interactivity, I added a JavaScript event listener to the contact form. When the form is submitted, it checks that all fields are filled and displays a confirmation message using DOM manipulation.
+    const form = createEl('form', {id: 'contactForm'}, 
+      createEl('input', {type: 'text', id: 'name', placeholder: 'Your Name', required: true}),
+      createEl('input', {type: 'email', id: 'email', placeholder: 'Your Email', required: true}),
+      createEl('textarea', {id: 'message', rows: 4, placeholder: 'Your Message', required: true}),
+      createEl('button', {type: 'submit'}, 'Send')
+    );
 
-I also applied CSS styles in the <style> tag within the <head>, ensuring the layout is clean, responsive-friendly, and visually appealing. Styles were kept simple, using familiar color schemes and spacing for readability.
+    const confirmMsg = createEl('p', {id: 'confirmation', style: 'text-align:center; color:green; margin-top:15px;'});
 
-Finally, I appended all sections (header, nav, content, and footer) directly to the body using JavaScript.
+    contactSection.appendChild(form);
+    contactSection.appendChild(confirmMsg);
 
-This project enhanced my understanding of DOM manipulation, dynamic UI creation, and event-driven programming in JavaScript. It also reinforced clean code practices and structuring web applications without relying on static HTML.
+    // Footer
+    const footer = createEl('footer', {}, 
+      '© 2025 Delicious Bites | All rights reserved.'
+    );
+
+    // Append all to body
+    document.body.appendChild(header);
+    document.body.appendChild(nav);
+    document.body.appendChild(menuSection);
+    document.body.appendChild(contactSection);
+    document.body.appendChild(footer);
+
+    // Form submission logic
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+
+      if (name && email && message) {
+        confirmMsg.textContent = `Thanks for contacting us, ${name}!`;
+        form.reset();
+      } else {
+        confirmMsg.textContent = 'Please fill in all fields.';
+      }
+    });
+  </script>
+</body>
+</html>
